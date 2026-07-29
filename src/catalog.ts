@@ -28,8 +28,8 @@ export const pieces: readonly PieceDefinition[] = [
     quantityPerSide: 1,
     stlFile: 'rey-cabildo.stl',
     camera: { distance: 132, targetHeight: 43 },
-    story: 'La torre, la cúpula y la recova del Cabildo coronan la pieza principal del conjunto.',
-    modelNotes: 'Fachada escalonada, reloj en relieve y cruz reforzada.',
+    story: 'Las dos recovas de cinco arcos, el balcón y la torre del Cabildo coronan la pieza principal.',
+    modelNotes: 'Diez arcos calados, reloj, campanario, cúpula y cruz reforzada.',
   },
   {
     id: 'reina',
@@ -41,8 +41,8 @@ export const pieces: readonly PieceDefinition[] = [
     quantityPerSide: 1,
     stlFile: 'reina-teatro-colon.stl',
     camera: { distance: 126, targetHeight: 40 },
-    story: 'La sala lírica porteña se vuelve una corona de columnas, frontón y cúpula.',
-    modelNotes: 'Columnata legible y cubierta facetada sin voladizos críticos.',
+    story: 'La fachada Beaux-Arts del gran teatro se vuelve una corona de arcos, columnas y frontones.',
+    modelNotes: 'Siete paños, tres frontones, columnata, remates y bandera reforzada.',
   },
   {
     id: 'alfil',
@@ -55,7 +55,7 @@ export const pieces: readonly PieceDefinition[] = [
     stlFile: 'alfil-obelisco.stl',
     camera: { distance: 116, targetHeight: 35 },
     story: 'La aguja de la Avenida 9 de Julio reemplaza la mitra con una silueta inmediata.',
-    modelNotes: 'Fuste troncopiramidal y ventanas superiores en relieve.',
+    modelNotes: 'Fuste troncopiramidal, cuatro accesos y ventanas superiores en relieve.',
   },
   {
     id: 'caballo',
@@ -67,8 +67,8 @@ export const pieces: readonly PieceDefinition[] = [
     quantityPerSide: 2,
     stlFile: 'caballo-san-martin.stl',
     camera: { distance: 112, targetHeight: 34 },
-    story: 'Caballo, jinete y pedestal forman una única silueta ecuestre compacta y resistente.',
-    modelNotes: 'Patas unidas al pedestal y capa posterior como refuerzo estructural.',
+    story: 'El caballo encabritado y el brazo alzado del Libertador forman una silueta ecuestre inmediata.',
+    modelNotes: 'Dos patas ancladas, cola de apoyo, jinete integrado y placa frontal.',
   },
   {
     id: 'torre',
@@ -80,8 +80,8 @@ export const pieces: readonly PieceDefinition[] = [
     quantityPerSide: 2,
     stlFile: 'torre-monumental.stl',
     camera: { distance: 104, targetHeight: 30 },
-    story: 'El reloj de Retiro ocupa el cuerpo alto y remata en una cubierta inspirada en su cúpula.',
-    modelNotes: 'Relojes en relieve, esquinas robustas y cubierta escalonada.',
+    story: 'El reloj de Retiro ocupa el cuerpo alto y remata en su linterna abierta y cúpula.',
+    modelNotes: 'Cuatro relojes, sillares de esquina, arcos calados y aguja reforzada.',
   },
   {
     id: 'peon',

@@ -19,8 +19,9 @@ marfil y 16 en bordó, o en los dos colores que se prefieran.
 ## Impresión
 
 Los modelos están orientados con la base en `Z = 0`, son una sola pieza sólida
-y no requieren soportes. La geometría prioriza una silueta reconocible y
-resistente antes que una reproducción arquitectónica exacta.
+y no requieren soportes. La geometría combina rasgos reconocibles de cada
+referencia —arquerías, frontones, relojes, linternas, relieves y silueta
+ecuestre— con refuerzos pensados para FDM.
 
 Configuración recomendada:
 
@@ -38,15 +39,16 @@ la tapa del buzón— están unidos o reforzados.
 
 - `public/stl/`: seis STL binarios en milímetros.
 - `public/downloads/ajedrez-porteno-stl.zip`: colección completa.
-- `models/jscad.ts`: fuente paramétrica JSCAD de las seis interpretaciones.
-- `models/manifold.ts`: cierre booleano y salida manifold para impresión.
+- `models/manifold.ts`: fuente paramétrica canónica y salida manifold para impresión.
+- `models/jscad.ts`: prototipos paramétricos JSCAD de las seis siluetas.
 - `src/catalog.ts`: catálogo tipado compartido por modelos, interfaz y pruebas.
 - `src/`: galería Vite + TypeScript + Three.js.
 
-La autoría geométrica usa primitivas y operaciones paramétricas de JSCAD. Para
-la exportación, el pipeline reconstruye la misma colección con el núcleo
-Manifold y solo escribe una frontera orientada y cerrada. El validador comprueba
-aristas, triángulos, medidas, base plana y cantidad de envolventes.
+La colección final se construye con primitivas, perfiles, envolventes y
+operaciones booleanas paramétricas sobre el núcleo Manifold. El generador solo
+escribe fronteras orientadas y cerradas. El validador comprueba aristas,
+triángulos, medidas, base plana y cantidad de envolventes; JSCAD conserva una
+implementación liviana para experimentar con las proporciones generales.
 
 ## Desarrollo
 

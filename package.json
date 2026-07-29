@@ -1,0 +1,31 @@
+{
+  "name": "ajedrez-porteno",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "generate": "node --experimental-strip-types scripts/generate-models.ts",
+    "validate:jscad": "node --experimental-strip-types scripts/validate-jscad.ts",
+    "validate:stl": "node --experimental-strip-types scripts/validate-stl.ts",
+    "validate:assimp": "node --experimental-strip-types scripts/validate-assimp.ts",
+    "package:stl": "node --experimental-strip-types scripts/package-stl.ts",
+    "test": "vitest run",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "three": "^0.184.0"
+  },
+  "devDependencies": {
+    "@jscad/modeling": "^2.13.0",
+    "@jscad/stl-serializer": "^2.1.23",
+    "@types/node": "^24.0.0",
+    "@types/three": "^0.183.1",
+    "fflate": "^0.8.3",
+    "manifold-3d": "^3.5.1",
+    "typescript": "~5.9.3",
+    "vite": "^7.3.1",
+    "vitest": "^4.0.18"
+  }
+}

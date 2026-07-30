@@ -1,0 +1,44 @@
+{
+  "lab": {
+    "python": "terceros/ai-3d-lab/.venv/bin/python",
+    "comfyui": "terceros/ComfyUI",
+    "checkpoint": "hunyuan3d-dit-v2-mv_fp16.safetensors",
+    "single_view_checkpoint": "hunyuan_3d_v2.1.safetensors",
+    "host": "127.0.0.1",
+    "port": 8188
+  },
+  "generation": {
+    "seeds": [101, 211, 307, 401],
+    "steps": 30,
+    "cfg": 7.5,
+    "latent_resolution": 3072,
+    "octree_resolution": 256,
+    "threshold": 0.6
+  },
+  "pieces": {
+    "caballo": {
+      "height_mm": 72,
+      "base_diameter_mm": 34,
+      "icon_start_mm": 13,
+      "icon_width_mm": 29
+    },
+    "rey": {
+      "height_mm": 95,
+      "base_diameter_mm": 38,
+      "icon_start_mm": 14,
+      "icon_width_mm": 34
+    }
+  },
+  "sources": {
+    "cabildo_lidar": {
+      "url": "https://cdn.buenosaires.gob.ar/datosabiertos/datasets/secretaria-de-desarrollo-urbano/edificios-publicos-3d/cabildo.zip",
+      "license": "CC BY 2.5 AR",
+      "attribution": "Gobierno de la Ciudad Autónoma de Buenos Aires, Edificios públicos 3D"
+    },
+    "san_martin_commons": {
+      "api": "https://commons.wikimedia.org/w/api.php",
+      "category": "Category:Statue of Jose de San Martin (Washington, D.C.)",
+      "license": "Licencia individual indicada por Wikimedia Commons"
+    }
+  }
+}

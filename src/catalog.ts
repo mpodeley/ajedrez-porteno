@@ -68,7 +68,7 @@ export const pieces: readonly PieceDefinition[] = [
     stlFile: 'caballo-san-martin.stl',
     camera: { distance: 112, targetHeight: 34 },
     story: 'El caballo encabritado y el brazo alzado del Libertador forman una silueta ecuestre inmediata.',
-    modelNotes: 'Dos patas ancladas, cola de apoyo, jinete integrado y placa frontal.',
+    modelNotes: 'Caballo encabritado, jinete, bicornio y brazo señalando; base y apoyos integrados para FDM.',
   },
   {
     id: 'torre',

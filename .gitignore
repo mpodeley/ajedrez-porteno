@@ -4,3 +4,6 @@ dist/
 *.log
 .validation/
 *.tsbuildinfo
+.experiments/
+__pycache__/
+*.pyc

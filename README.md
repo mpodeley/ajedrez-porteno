@@ -39,16 +39,31 @@ la tapa del buzón— están unidos o reforzados.
 
 - `public/stl/`: seis STL binarios en milímetros.
 - `public/downloads/ajedrez-porteno-stl.zip`: colección completa.
-- `models/manifold.ts`: fuente paramétrica canónica y salida manifold para impresión.
+- `models/manifold.ts`: fuente paramétrica canónica de cinco piezas y respaldo del caballo.
+- `models/curated/caballo-san-martin.stl`: caballo multivista seleccionado y reparado para FDM.
 - `models/jscad.ts`: prototipos paramétricos JSCAD de las seis siluetas.
 - `src/catalog.ts`: catálogo tipado compartido por modelos, interfaz y pruebas.
 - `src/`: galería Vite + TypeScript + Three.js.
 
-La colección final se construye con primitivas, perfiles, envolventes y
-operaciones booleanas paramétricas sobre el núcleo Manifold. El generador solo
-escribe fronteras orientadas y cerradas. El validador comprueba aristas,
-triángulos, medidas, base plana y cantidad de envolventes; JSCAD conserva una
-implementación liviana para experimentar con las proporciones generales.
+Cinco piezas se construyen con primitivas, perfiles, envolventes y operaciones
+booleanas paramétricas sobre el núcleo Manifold. El caballo curado parte de tres
+vistas públicas del monumento, Hunyuan3D multivista (semilla 307), reparación
+voxel de 0,35 mm, orientación editorial a 150° y simplificación a 70.000
+triángulos. `npm run generate`
+conserva ese STL curado y genera las demás piezas. El validador comprueba
+aristas, triángulos, medidas, base plana y cantidad de envolventes; JSCAD
+conserva una implementación liviana para experimentar con las proporciones.
+
+## Laboratorio de fidelidad 3D
+
+`ai3d/` agrega un flujo local y opcional para investigar modelos más fieles con
+LiDAR abierto, referencias fotográficas permitidas, Hunyuan3D sobre ROCm y una
+etapa determinista de reparación FDM. Los datasets, checkpoints y candidatos
+se mantienen fuera de Git; sólo se integra un resultado después de curarlo y
+pasar la validación del proyecto.
+
+Las instrucciones están en [`ai3d/README.md`](ai3d/README.md) y las licencias
+de terceros en [`THIRD_PARTY.md`](THIRD_PARTY.md).
 
 ## Desarrollo
 

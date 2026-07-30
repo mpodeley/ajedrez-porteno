@@ -25,9 +25,10 @@ recorta y aísla tres vistas licenciadas de San Martín:
 ../../terceros/ai-3d-lab/.venv/bin/python ai3d/prepare_san_martin.py
 ```
 
-Para generar el piloto, se aceptan imágenes llamadas `front`, `left`, `back` y
-`right` en PNG, JPG o WebP. La frontal es obligatoria; Hunyuan admite vistas
-opcionales cuando no existe una toma posterior confiable:
+Para generar un candidato, se aceptan imágenes llamadas `front`, `left`, `back`
+y `right` en PNG, JPG o WebP. La frontal es obligatoria; Hunyuan admite vistas
+opcionales cuando no existe una toma posterior confiable. `--piece` acepta las
+seis piezas:
 
 ```bash
 npm run ai3d:generate -- --piece caballo --input-dir .experiments/ai3d/views/san-martin
@@ -53,9 +54,11 @@ npm run ai3d:repair -- .experiments/ai3d/raw/caballo/model.glb --piece caballo -
 La integración final se hace sólo después de comparar renders, silueta,
 fidelidad y condiciones FDM contra el modelo actual.
 
-El caballo actualmente curado se obtuvo con la semilla `307`, reparación a
-0,35 mm, dos apoyos de isla integrados, giro final de 150° y simplificación a
-70.000 triángulos. El generador lo toma desde `models/curated/`, de modo que
+El caballo actualmente curado se obtuvo con la semilla `307`, escala isotrópica
+de la estatua a 33 mm, reparación a 0,25 mm, dos apoyos de isla integrados,
+suavizado Taubin, giro final de 150° y simplificación a 90.000 triángulos. El
+pedestal completa la altura sin deformar la relación entre caballo y jinete. El
+generador lo toma desde `models/curated/`, de modo que
 `npm run generate` continúa siendo reproducible sin depender de que ComfyUI
 esté encendido.
 

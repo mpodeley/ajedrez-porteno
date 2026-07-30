@@ -20,13 +20,37 @@
       "height_mm": 72,
       "base_diameter_mm": 34,
       "icon_start_mm": 13,
-      "icon_width_mm": 29
+      "icon_width_mm": 33
     },
     "rey": {
       "height_mm": 95,
       "base_diameter_mm": 38,
       "icon_start_mm": 14,
       "icon_width_mm": 34
+    },
+    "reina": {
+      "height_mm": 88,
+      "base_diameter_mm": 36,
+      "icon_start_mm": 14,
+      "icon_width_mm": 34
+    },
+    "alfil": {
+      "height_mm": 78,
+      "base_diameter_mm": 34,
+      "icon_start_mm": 13,
+      "icon_width_mm": 18
+    },
+    "torre": {
+      "height_mm": 65,
+      "base_diameter_mm": 34,
+      "icon_start_mm": 13,
+      "icon_width_mm": 25
+    },
+    "peon": {
+      "height_mm": 50,
+      "base_diameter_mm": 28,
+      "icon_start_mm": 12,
+      "icon_width_mm": 19
     }
   },
   "sources": {
@@ -39,6 +63,17 @@
       "api": "https://commons.wikimedia.org/w/api.php",
       "category": "Category:Statue of Jose de San Martin (Washington, D.C.)",
       "license": "Licencia individual indicada por Wikimedia Commons"
+    },
+    "commons_pieces": {
+      "api": "https://commons.wikimedia.org/w/api.php",
+      "license": "Licencia individual indicada por Wikimedia Commons",
+      "categories": {
+        "rey": "Category:Cabildo de Buenos Aires",
+        "reina": "Category:Teatro Colón",
+        "alfil": "Category:Obelisk of Buenos Aires",
+        "torre": "Category:Torre Monumental, Buenos Aires",
+        "peon": "Category:Mailboxes in Argentina"
+      }
     }
   }
 }

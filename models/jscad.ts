@@ -74,6 +74,19 @@ export const classicBase = (diameter: number, topZ = 15): Geom3 => {
   return extrudeRotate({ segments: SEGMENTS }, profile)
 }
 
+const architecturalStem = (
+  diameter: number,
+  topZ: number,
+  lowerRadius: number,
+  upperRadius: number,
+): Geom3 => union(
+  classicBase(diameter),
+  cone(lowerRadius, upperRadius, topZ - 19, [0, 0, 15 + (topZ - 19) / 2]),
+  cyl(lowerRadius + 0.8, 2.2, [0, 0, 16.1]),
+  ellip([upperRadius + 3.4, upperRadius + 3.4, 2.8], [0, 0, topZ - 2.4]),
+  cyl(upperRadius + 4.2, 2.2, [0, 0, topZ - 0.7]),
+)
+
 const cross = (z: number): Geom3 =>
   union(
     box([2.4, 2.4, 8], [0, 0, z - 4], 0.35),
@@ -81,67 +94,85 @@ const cross = (z: number): Geom3 =>
   )
 
 const cabildo = (): Geom3 => {
-  const facade = box([28, 12, 16], [0, 0, 23], 0.8)
-  const arcade = [-10, -5, 0, 5, 10].map((x) => [
-    box([1.5, 2.2, 11], [x - 1.9, -7, 23], 0.3),
-    box([1.5, 2.2, 11], [x + 1.9, -7, 23], 0.3),
-    beam([x - 1.9, -7, 27.5], [x, -7, 30], 0.8),
-    beam([x, -7, 30], [x + 1.9, -7, 27.5], 0.8),
+  const facade = box([34, 8, 10], [0, 0, 75], 0.35)
+  const arcade = [-13.2, -6.6, 0, 6.6, 13.2].map((x) => [
+    box([0.8, 1.2, 3.3], [x - 1.8, -4.5, 72.3], 0.2),
+    box([0.8, 1.2, 3.3], [x + 1.8, -4.5, 72.3], 0.2),
+    beam([x - 1.8, -4.5, 73.8], [x, -4.5, 75.1], 0.45),
+    beam([x, -4.5, 75.1], [x + 1.8, -4.5, 73.8], 0.45),
   ]).flat()
-  const upper = box([12.5, 11, 18], [0, 0, 38.5], 0.65)
+  const upper = box([10.5, 7.5, 8.5], [0, 0, 83], 0.3)
   const ledges = [
-    box([15, 13, 2], [0, 0, 30.5], 0.35),
-    box([15, 13, 2], [0, 0, 47.5], 0.35),
+    box([12, 9, 1.25], [0, 0, 79.3], 0.2),
+    box([12, 8.7, 1.2], [0, 0, 87], 0.2),
   ]
   const clock = [
-    cyl(3.2, 1.8, [0, -6.2, 41], 32),
-    box([0.75, 1.3, 4.2], [0, -7.25, 41], 0.2),
-    box([2.4, 1.3, 0.75], [0.7, -7.25, 41], 0.2),
+    cyl(1.7, 1.2, [0, -4, 82], 32),
+    box([0.4, 0.8, 1.7], [0, -4.8, 82], 0.15),
+    box([1.15, 0.8, 0.4], [0.35, -4.8, 82], 0.15),
   ]
   const dome = union(
-    cone(7, 4.8, 9, [0, 0, 53]),
-    ellip([5.4, 5.4, 8.5], [0, 0, 65]),
-    cone(2.3, 0.8, 8, [0, 0, 76.5]),
-    ball(1.5, [0, 0, 81.2]),
-    cyl(1, 8, [0, 0, 85]),
+    cyl(3.3, 1.5, [0, 0, 88.2]),
+    ellip([3.5, 3.2, 2.5], [0, 0, 90]),
+    cone(2.5, 0.65, 3.6, [0, 0, 92.6]),
+    ball(0.75, [0, 0, 94]),
+    cyl(0.72, 2.8, [0, 0, 94]),
   )
-  return union(classicBase(38), facade, ...arcade, upper, ...ledges, ...clock, dome, cross(95))
+  return union(
+    architecturalStem(38, 71, 8.4, 5.2),
+    box([27, 9.5, 1.6], [0, 0, 69.7], 0.2),
+    box([35, 9, 1.6], [0, 0, 70.7], 0.2),
+    facade,
+    ...arcade,
+    upper,
+    ...ledges,
+    ...clock,
+    dome,
+    cross(95),
+  )
 }
 
 const teatroColon = (): Geom3 => {
-  const body = box([27, 13, 18], [0, 0.6, 24], 0.9)
-  const steps = [
-    box([30, 15, 2], [0, 0, 15.5], 0.35),
-    box([28, 14, 2], [0, 0, 17.2], 0.35),
-  ]
-  const columns = [-10, -6, -2, 2, 6, 10].map((x) =>
-    cyl(1.15, 16, [x, -6.75, 27], 20),
+  const body = box([34, 10, 12.5], [0, 0, 75], 0.35)
+  const columns = [-12.2, -8.1, -4.05, 0, 4.05, 8.1, 12.2].map((x) =>
+    cyl(0.66, 5.4, [x, -5.35, 78], 20),
   )
-  const capitals = [-10, -6, -2, 2, 6, 10].map((x) =>
-    box([3, 2.5, 1.4], [x, -6.7, 35], 0.25),
+  const capitals = [-12.2, -8.1, -4.05, 0, 4.05, 8.1, 12.2].flatMap((x) => [
+    box([1.8, 1.4, 0.8], [x, -5.3, 75.2], 0.15),
+    box([1.9, 1.4, 0.8], [x, -5.3, 80.8], 0.15),
+  ])
+  const ornaments = [-15.3, -10.8, -7.4, 7.4, 10.8, 15.3].map((x) =>
+    union(cyl(0.5, 1.6, [x, 0, 84]), ball(0.72, [x, 0, 85])),
   )
-  const entablature = box([30, 15, 4], [0, 0, 38], 0.45)
-  const pediment = prismX([[-15, 0], [15, 0], [0, 9]], 14, [0, 0, 40])
-  const crown = union(
-    box([16, 11, 6], [0, 1, 50], 0.6),
-    cone(9, 6, 5, [0, 1, 55.5]),
-    ellip([6, 5, 7], [0, 1, 63]),
-    cone(3.2, 0.8, 8, [0, 1, 74]),
-    ball(1.6, [0, 1, 78.5]),
-    cross(88),
+  return union(
+    architecturalStem(36, 69, 8, 5),
+    box([27, 10.5, 1.6], [0, 0, 67.7], 0.2),
+    box([35, 11, 1.8], [0, 0, 69], 0.2),
+    body,
+    box([35, 11, 1.1], [0, 0, 74.4], 0.15),
+    box([35, 11, 1.2], [0, 0, 81.2], 0.15),
+    ...columns,
+    ...capitals,
+    prismX([[-8.5, 0], [8.5, 0], [0, 5]], 10, [0, 0, 81]),
+    prismX([[-4, 0], [4, 0], [0, 3.4]], 10, [-13, 0, 81]),
+    prismX([[-4, 0], [4, 0], [0, 3.4]], 10, [13, 0, 81]),
+    ...ornaments,
+    cyl(0.62, 5, [0, 0, 86]),
+    box([4.5, 1.1, 2.2], [2.2, 0, 87], 0.15),
+    ball(0.8, [0, 0, 88]),
   )
-  return union(classicBase(36), body, ...steps, ...columns, ...capitals, entablature, pediment, crown)
 }
 
 const obelisco = (): Geom3 => {
   const plinth = union(
-    box([18, 18, 4], [0, 0, 16], 0.5),
-    box([14, 14, 4], [0, 0, 19], 0.4),
+    box([15, 15, 2.4], [0, 0, 15.8], 0.35),
+    box([11.5, 11.5, 3], [0, 0, 18.3], 0.3),
+    box([9, 9, 3], [0, 0, 21], 0.25),
   )
-  const shaft = cone(7, 4.1, 43, [0, 0, 41.5], 4)
-  const point = cone(4.1, 0, 13, [0, 0, 69.5], 4)
+  const shaft = cone(4, 2.35, 47, [0, 0, 44.5], 4)
+  const point = cone(2.35, 0, 10, [0, 0, 73], 4)
   const windows = [0, Math.PI / 2, Math.PI, Math.PI * 1.5].map((angle) => {
-    const relief = box([2.1, 1.3, 4.2], [0, -4.1, 60], 0.3)
+    const relief = box([1.55, 1.2, 2.8], [0, -2.45, 68], 0.2)
     return rotateZ(angle, relief)
   })
   return union(classicBase(34), plinth, shaft, point, ...windows)
@@ -190,42 +221,49 @@ const sanMartin = (): Geom3 => {
 
 const torreMonumental = (): Geom3 => {
   const plinth = union(
-    box([21, 21, 4], [0, 0, 16], 0.45),
-    box([17, 17, 4], [0, 0, 19], 0.4),
+    box([17, 17, 2.5], [0, 0, 15.7], 0.35),
+    box([14, 14, 3.5], [0, 0, 18], 0.3),
   )
   const body = union(
-    box([14, 14, 25], [0, 0, 32.5], 0.75),
-    box([16, 16, 3], [0, 0, 44], 0.35),
+    box([11, 11, 24], [0, 0, 31.2], 0.45),
+    box([13, 13, 1.8], [0, 0, 43.5], 0.25),
+    box([13, 13, 7], [0, 0, 47.5], 0.3),
   )
   const clocks = [0, Math.PI / 2, Math.PI, Math.PI * 1.5].map((angle) =>
     rotateZ(angle, union(
-      cyl(3.5, 1.4, [0, -7.3, 37], 32),
-      box([0.6, 1.1, 4], [0, -8.2, 37], 0.2),
-      box([2.2, 1.1, 0.6], [0.7, -8.2, 37], 0.2),
+      cyl(2.75, 1.25, [0, -6.65, 47.5], 32),
+      box([0.45, 0.8, 2.8], [0, -7.4, 47.5], 0.15),
+      box([1.6, 0.8, 0.45], [0.5, -7.4, 47.5], 0.15),
     )),
   )
   const roof = union(
-    box([17, 17, 3], [0, 0, 47], 0.35),
-    cone(9, 5.6, 8, [0, 0, 52.5], 4),
-    box([7.5, 7.5, 4], [0, 0, 58], 0.4),
-    cone(4.8, 0.6, 5, [0, 0, 62.5], 4),
+    box([14.5, 14.5, 1.5], [0, 0, 51.5], 0.2),
+    box([10.5, 10.5, 6], [0, 0, 55], 0.25),
+    box([11.5, 11.5, 1.5], [0, 0, 58.3], 0.2),
+    cone(5.5, 4, 2.5, [0, 0, 60], 4),
+    ellip([4.1, 4.1, 2.4], [0, 0, 61.7]),
+    cone(2.5, 0.5, 2.8, [0, 0, 63.2], 4),
+    cyl(0.5, 2.5, [0, 0, 64]),
+    ball(0.7, [0, 0, 65]),
   )
   return union(classicBase(34), plinth, body, ...clocks, roof)
 }
 
 const buzon = (): Geom3 => {
   const body = union(
-    cyl(8.2, 25, [0, 0, 27.5]),
-    cone(9, 8.2, 3, [0, 0, 16.5]),
-    ellip([8.2, 8.2, 6], [0, 0, 40]),
-    cone(3.4, 1, 6, [0, 0, 46]),
-    ball(1.4, [0, 0, 48.5]),
+    cyl(6.7, 26.5, [0, 0, 29.5]),
+    cone(8.5, 6.7, 4, [0, 0, 15]),
+    cyl(7.6, 1.8, [0, 0, 17]),
+    cyl(7.6, 1.8, [0, 0, 41]),
+    cyl(8.2, 2.2, [0, 0, 43]),
+    ellip([8, 8, 4.2], [0, 0, 46]),
+    cyl(0.9, 1.4, [0, 0, 49.3]),
   )
   const front = union(
-    box([9, 1.5, 1.8], [0, -8.2, 35.2], 0.45),
-    box([8.5, 1.4, 9.5], [0, -8.15, 27], 0.65),
-    box([5.5, 1.2, 0.9], [0, -9, 29], 0.2),
-    ball(0.85, [2.4, -8.9, 24.5]),
+    box([7.5, 1.25, 0.95], [0, -7.05, 38.1], 0.2),
+    box([7, 1.2, 9], [0, -6.85, 25.8], 0.35),
+    box([5.5, 1.1, 0.8], [0, -7.45, 28], 0.15),
+    ball(0.75, [2.1, -7.4, 24.5]),
   )
   return union(classicBase(28, 14), body, front)
 }

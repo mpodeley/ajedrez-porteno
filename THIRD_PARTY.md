@@ -12,6 +12,7 @@ repositorio.
 | Open3D, laspy, trimesh, Manifold | LiDAR y reparación geométrica | Licencias de sus respectivos proyectos |
 | Cabildo, Edificios públicos 3D | Nube de puntos de referencia | CC BY 2.5 AR, Gobierno de la Ciudad de Buenos Aires |
 | Fotos de San Martín | Referencias multivista | Licencia individual en Wikimedia Commons; ver manifiesto local |
+| Cabildo, Teatro Colón, Obelisco, Torre Monumental y buzón | Control de proporciones y silueta | Categorías de Wikimedia Commons; autor y licencia individual en el manifiesto local |
 
 `ai3d/fetch_sources.py` guarda URL, autor, licencia y SHA-256 en
 `.experiments/ai3d/manifests/sources.json`. Las fotografías sin permiso de

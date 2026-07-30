@@ -55,6 +55,71 @@ def chess_base(diameter: float, height: float) -> trimesh.Trimesh:
     return trimesh.creation.revolve(profile, sections=128)
 
 
+def equestrian_pedestal(start_z: float, top_z: float) -> trimesh.Trimesh:
+    lower_height = 2.8
+    upper_height = 3.0
+    lower = trimesh.creation.box(
+        [20.0, 17.0, lower_height],
+        transform=trimesh.transformations.translation_matrix(
+            [0, 0, start_z + lower_height / 2 - 0.5]
+        ),
+    )
+    upper = trimesh.creation.box(
+        [29.0, 17.0, upper_height],
+        transform=trimesh.transformations.translation_matrix(
+            [0, 0, top_z - upper_height / 2 + 0.5]
+        ),
+    )
+    z0 = start_z + lower_height - 0.8
+    z1 = top_z - upper_height + 0.8
+    vertices = np.array(
+        [
+            [-8.2, -6.8, z0],
+            [8.2, -6.8, z0],
+            [8.2, 6.8, z0],
+            [-8.2, 6.8, z0],
+            [-11.0, -6.4, z1],
+            [11.0, -6.4, z1],
+            [11.0, 6.4, z1],
+            [-11.0, 6.4, z1],
+        ]
+    )
+    faces = np.array(
+        [
+            [0, 2, 1], [0, 3, 2],
+            [4, 5, 6], [4, 6, 7],
+            [0, 1, 5], [0, 5, 4],
+            [1, 2, 6], [1, 6, 5],
+            [2, 3, 7], [2, 7, 6],
+            [3, 0, 4], [3, 4, 7],
+        ],
+        dtype=np.int64,
+    )
+    body = trimesh.Trimesh(vertices=vertices, faces=faces, process=True)
+    return trimesh.util.concatenate([lower, body, upper])
+
+
+def landmark_pedestal(start_z: float, top_z: float, icon_width: float) -> trimesh.Trimesh:
+    height = max(top_z - start_z, 1.2)
+    lower_radius = min(icon_width * 0.34, 8.5)
+    upper_radius = min(icon_width * 0.43, 10.5)
+    profile = np.array(
+        [
+            [0.0, 0.0],
+            [lower_radius, 0.0],
+            [lower_radius, height * 0.12],
+            [lower_radius * 0.82, height * 0.28],
+            [upper_radius * 0.72, height * 0.76],
+            [upper_radius, height * 0.9],
+            [upper_radius, height],
+            [0.0, height],
+        ]
+    )
+    pedestal = trimesh.creation.revolve(profile, sections=96)
+    pedestal.apply_translation([0, 0, start_z])
+    return pedestal
+
+
 def voxel_union(
     meshes: list[trimesh.Trimesh],
     pitch: float,
@@ -63,7 +128,7 @@ def voxel_union(
     support_report: dict[str, Any] | None = None,
     support_min_height_mm: float = 14.0,
     support_max_height_mm: float = 42.0,
-    support_min_area_voxels: int = 4,
+    support_min_area_voxels: int = 10,
 ) -> trimesh.Trimesh:
     joined = trimesh.util.concatenate(meshes)
     grid = joined.voxelized(pitch=pitch, method="subdivide")
@@ -90,9 +155,15 @@ def voxel_union(
                 if np.any(island & previous):
                     continue
                 footprint = ndimage.binary_dilation(island, iterations=2)
-                before = int(matrix[:, :, :layer].sum())
-                matrix[:, :, :layer] |= footprint[:, :, None]
-                added = int(matrix[:, :, :layer].sum()) - before
+                overlap = np.any(
+                    matrix[:, :, :layer] & footprint[:, :, None],
+                    axis=(0, 1),
+                )
+                overlap_layers = np.flatnonzero(overlap)
+                start_layer = int(overlap_layers[-1] + 1) if len(overlap_layers) else 0
+                before = int(matrix[:, :, start_layer:layer].sum())
+                matrix[:, :, start_layer:layer] |= footprint[:, :, None]
+                added = int(matrix[:, :, start_layer:layer].sum()) - before
                 if added:
                     pillar_count += 1
                     pillar_voxels += added
@@ -119,7 +190,11 @@ def voxel_union(
 def main() -> int:
     parser = argparse.ArgumentParser(description="Normaliza, escala y une un candidato AI con una base imprimible.")
     parser.add_argument("mesh", type=Path)
-    parser.add_argument("--piece", choices=("caballo", "rey"), default="caballo")
+    parser.add_argument(
+        "--piece",
+        choices=("rey", "reina", "alfil", "caballo", "torre", "peon"),
+        default="caballo",
+    )
     parser.add_argument("--up", choices=("x", "y", "z"), default="y")
     parser.add_argument("--pitch", type=float, default=0.35, help="Resolución de reparación en milímetros.")
     parser.add_argument("--no-support", action="store_true", help="No agrega el apoyo escultórico bajo el vientre.")
@@ -132,28 +207,45 @@ def main() -> int:
 
     bounds = mesh.bounds
     extent = bounds[1] - bounds[0]
-    target_icon_height = piece["height_mm"] - piece["icon_start_mm"] + 0.8
-    horizontal_scale = piece["icon_width_mm"] / max(extent[0], extent[1])
-    vertical_scale = target_icon_height / extent[2]
-    mesh.apply_scale([horizontal_scale, horizontal_scale, vertical_scale])
+    available_icon_height = piece["height_mm"] - piece["icon_start_mm"] + 0.8
+    if args.piece == "caballo":
+        statue_scale = piece["icon_width_mm"] / max(extent)
+    else:
+        statue_scale = min(
+            piece["icon_width_mm"] / max(extent[0], extent[1]),
+            available_icon_height / extent[2],
+        )
+    mesh.apply_scale(statue_scale)
     mesh.apply_translation(-mesh.bounds.mean(axis=0))
-    mesh.apply_translation([0, 0, piece["icon_start_mm"] - mesh.bounds[0, 2] - 0.8])
+    mesh.apply_translation([0, 0, piece["height_mm"] - mesh.bounds[1, 2]])
+    statue_bottom = float(mesh.bounds[0, 2])
+    scale_mode = "isotropic"
 
     base = chess_base(piece["base_diameter_mm"], piece["icon_start_mm"])
     parts = [base, mesh]
-    if args.piece == "caballo" and not args.no_support:
-        support_height = (piece["height_mm"] - piece["icon_start_mm"]) * 0.34
-        support = trimesh.creation.cone(
-            radius=3.1,
-            height=support_height,
-            sections=64,
-            transform=trimesh.transformations.translation_matrix(
-                [0, 0, piece["icon_start_mm"] + support_height / 2 - 0.7]
-            ),
+    if args.piece == "caballo":
+        parts.append(equestrian_pedestal(piece["icon_start_mm"], statue_bottom + 0.8))
+    else:
+        parts.append(
+            landmark_pedestal(
+                piece["icon_start_mm"],
+                statue_bottom + 0.8,
+                piece["icon_width_mm"],
+            )
         )
-        parts.append(support)
     support_report: dict[str, Any] = {}
-    combined = voxel_union(parts, args.pitch, self_support=args.piece == "caballo", support_report=support_report)
+    combined = voxel_union(
+        parts,
+        args.pitch,
+        self_support=args.piece == "caballo" and not args.no_support,
+        support_report=support_report,
+        support_min_height_mm=max(piece["icon_start_mm"], statue_bottom + 3.0),
+        support_max_height_mm=(
+            statue_bottom + mesh.extents[2] * 0.55
+            if args.piece == "caballo"
+            else piece["height_mm"] - 4.0
+        ),
+    )
     combined.apply_translation([0, 0, -combined.bounds[0, 2]])
     horizontal_correction = piece["base_diameter_mm"] / max(combined.extents[0], combined.extents[1])
     vertical_correction = piece["height_mm"] / combined.extents[2]
@@ -176,6 +268,9 @@ def main() -> int:
         "volume_mm3": float(combined.volume),
         "repair_pitch_mm": args.pitch,
         "support_added": args.piece == "caballo" and not args.no_support,
+        "scale_mode": scale_mode,
+        "statue_height_mm": float(mesh.extents[2]),
+        "pedestal_top_mm": float(statue_bottom + 0.8),
         "self_support_pillars": support_report.get("pillars", 0),
         "self_support_voxels": support_report.get("pillar_voxels", 0),
         "self_support_events": support_report.get("events", []),

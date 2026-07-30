@@ -15,14 +15,36 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Reduce triángulos conservando medidas y cierre.")
     parser.add_argument("input", type=Path)
     parser.add_argument("output", type=Path)
-    parser.add_argument("--piece", choices=("caballo", "rey"), default="caballo")
+    parser.add_argument(
+        "--piece",
+        choices=("rey", "reina", "alfil", "caballo", "torre", "peon"),
+        default="caballo",
+    )
     parser.add_argument("--faces", type=int, default=70_000)
     parser.add_argument("--yaw", type=float, default=0.0, help="Rotación final alrededor de Z en grados.")
+    parser.add_argument("--smooth-iterations", type=int, default=12)
     args = parser.parse_args()
     source = o3d.io.read_triangle_mesh(str(args.input))
     source.remove_duplicated_vertices()
     source.remove_duplicated_triangles()
     source.remove_degenerate_triangles()
+    piece = config()["pieces"][args.piece]
+    if args.smooth_iterations:
+        original = np.asarray(source.vertices).copy()
+        smoothed = source.filter_smooth_taubin(
+            number_of_iterations=args.smooth_iterations,
+            lambda_filter=0.45,
+            mu=-0.48,
+        )
+        filtered = np.asarray(smoothed.vertices)
+        transition = np.clip(
+            (original[:, 2] - piece["icon_start_mm"]) / 5.0,
+            0.0,
+            1.0,
+        )[:, None]
+        source.vertices = o3d.utility.Vector3dVector(
+            original * (1.0 - transition) + filtered * transition
+        )
     simplified = source.simplify_quadric_decimation(args.faces)
     simplified.remove_duplicated_vertices()
     simplified.remove_duplicated_triangles()
@@ -35,7 +57,6 @@ def main() -> int:
             trimesh.transformations.rotation_matrix(np.deg2rad(args.yaw), [0, 0, 1])
         )
     mesh.apply_translation([0, 0, -mesh.bounds[0, 2]])
-    piece = config()["pieces"][args.piece]
     mesh.apply_scale(
         [
             piece["base_diameter_mm"] / max(mesh.extents[:2]),

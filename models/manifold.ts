@@ -97,6 +97,19 @@ export const classicBaseSolid = (diameter: number, topZ = 15): Solid => {
   return new CrossSection([profile]).revolve(48)
 }
 
+const architecturalStem = (
+  diameter: number,
+  topZ: number,
+  lowerRadius: number,
+  upperRadius: number,
+): Solid => unite(
+  classicBaseSolid(diameter),
+  cone(lowerRadius, upperRadius, topZ - 19, [0, 0, 15 + (topZ - 19) / 2]),
+  cyl(lowerRadius + 0.8, 2.2, [0, 0, 16.1]),
+  ellip([upperRadius + 3.4, upperRadius + 3.4, 2.8], [0, 0, topZ - 2.4]),
+  cyl(upperRadius + 4.2, 2.2, [0, 0, topZ - 0.7]),
+)
+
 const cross = (topZ: number): Solid =>
   unite(
     box([2.4, 2.4, 10], [0, 0, topZ - 5]),
@@ -104,49 +117,50 @@ const cross = (topZ: number): Solid =>
   )
 
 const buildCabildo = (): Solid => {
-  const bays = [-12, -6, 0, 6, 12]
+  const bays = [-13.2, -6.6, 0, 6.6, 13.2]
   let facade = unite(
-    box([31, 12, 29], [0, 0, 29.5]),
-    box([33, 14, 2.2], [0, 0, 16]),
+    box([34, 8, 10], [0, 0, 75]),
+    box([35, 9, 1.6], [0, 0, 70.7]),
   )
   for (const x of bays) {
-    facade = facade.subtract(archedOpeningFront(x, -6.15, 16.4, 25, 2.25, 2.2))
-    facade = facade.subtract(archedOpeningFront(x, -6.15, 32.7, 38.5, 1.75, 1.8))
+    facade = facade.subtract(archedOpeningFront(x, -4.15, 70.7, 73.8, 1.8, 1.7))
+    facade = facade.subtract(archedOpeningFront(x, -4.15, 76.1, 78, 1.35, 1.5))
   }
 
-  const lowerFrames = bays.map((x) => archFrameFront(x, -6.25, 25, 2.25, 16.5, 0.52))
-  const upperFrames = bays.map((x) => archFrameFront(x, -6.2, 38.5, 1.75, 32.8, 0.48))
+  const lowerFrames = bays.map((x) => archFrameFront(x, -4.25, 73.8, 1.8, 70.8, 0.48))
+  const upperFrames = bays.map((x) => archFrameFront(x, -4.2, 78, 1.35, 76.2, 0.44))
   const balconyPosts = [-15, -12, -9, -6, -3, 0, 3, 6, 9, 12, 15].map((x) =>
-    box([0.55, 0.85, 2.8], [x, -6.9, 34.2]),
+    box([0.48, 0.7, 1.7], [x, -4.85, 76.1]),
   )
-  const towerBody = box([11.5, 10.5, 24], [0, 0, 54])
-    .subtract(archedOpeningFront(0, -5.4, 56, 61, 2.2, 1.7))
+  const towerBody = box([10.5, 7.5, 8.5], [0, 0, 83])
+    .subtract(archedOpeningFront(0, -3.85, 82.5, 84.6, 1.35, 1.5))
   const clock = unite(
-    discY(2.55, 1.5, [0, -5.75, 49]),
-    discY(1.95, 1.65, [0, -6.45, 49]),
-    box([0.5, 1.2, 3.1], [0, -7.2, 49]),
-    box([1.7, 1.2, 0.5], [0.5, -7.2, 49]),
+    discY(1.7, 1.25, [0, -4, 82]),
+    discY(1.25, 1.35, [0, -4.65, 82]),
+    box([0.4, 0.8, 1.7], [0, -5.2, 82]),
+    box([1.15, 0.8, 0.4], [0.35, -5.2, 82]),
   )
   const parts = [
-    classicBaseSolid(38),
+    architecturalStem(38, 71, 8.4, 5.2),
+    box([27, 9.5, 1.6], [0, 0, 69.7]),
     facade,
     ...lowerFrames,
     ...upperFrames,
-    box([32, 14, 1.2], [0, 0, 31.8]),
-    box([31, 1.1, 0.65], [0, -6.9, 35.5]),
+    box([34, 9, 1.1], [0, 0, 75.2]),
+    box([33, 0.9, 0.55], [0, -4.7, 76.9]),
     ...balconyPosts,
     towerBody,
-    box([13.5, 12.5, 1.5], [0, 0, 43.2]),
-    box([13.5, 12.5, 1.6], [0, 0, 65.5]),
+    box([12, 9, 1.25], [0, 0, 79.3]),
+    box([12, 8.7, 1.2], [0, 0, 87]),
     clock,
-    prismX([[-7, 0], [7, 0], [0, 7]], 10.8, [0, 0, 65]),
-    ball(1.45, [-5.1, 0, 69]),
-    ball(1.45, [5.1, 0, 69]),
-    cyl(3.8, 3.2, [0, 0, 71.2]),
-    ellip([4.3, 4.3, 3.8], [0, 0, 74.2]),
-    cone(3.1, 0.75, 6.5, [0, 0, 79]),
-    ball(1.15, [0, 0, 82.5]),
-    cyl(0.9, 9.5, [0, 0, 87]),
+    prismX([[-6, 0], [6, 0], [0, 3.8]], 7.6, [0, 0, 86.8]),
+    ball(0.9, [-4.2, 0, 88]),
+    ball(0.9, [4.2, 0, 88]),
+    cyl(3.3, 1.5, [0, 0, 88.2]),
+    ellip([3.5, 3.2, 2.5], [0, 0, 90]),
+    cone(2.5, 0.65, 3.6, [0, 0, 92.6]),
+    ball(0.75, [0, 0, 94]),
+    cyl(0.72, 2.8, [0, 0, 94]),
     cross(95),
   ]
   return Manifold.union(parts)
@@ -154,62 +168,61 @@ const buildCabildo = (): Solid => {
 
 const buildColon = (): Solid => {
   const lowerBays = [-14, -9.35, -4.7, 0, 4.7, 9.35, 14]
-  let body = box([34, 13, 37], [0, 0, 34])
+  let body = box([34, 10, 12.5], [0, 0, 75])
   for (const x of lowerBays) {
-    body = body.subtract(archedOpeningFront(x, -6.65, 17, 26, 1.55, 1.7))
-    body = body.subtract(archedOpeningFront(x, -6.65, 35, 43.5, 1.65, 1.7))
+    body = body.subtract(archedOpeningFront(x, -5.15, 68.9, 72.2, 1.35, 1.5))
+    body = body.subtract(archedOpeningFront(x, -5.15, 76.1, 79, 1.25, 1.5))
   }
   const columns = [-12.2, -8.1, -4.05, 0, 4.05, 8.1, 12.2].map((x) =>
     unite(
-      cyl(0.82, 13.5, [x, -7, 42], 20),
-      box([2.3, 2, 1.3], [x, -6.95, 35.2]),
-      box([2.4, 2, 1.5], [x, -6.95, 49]),
+      cyl(0.66, 5.4, [x, -5.35, 78], 20),
+      box([1.8, 1.4, 0.8], [x, -5.3, 75.2]),
+      box([1.9, 1.4, 0.8], [x, -5.3, 80.8]),
     ),
   )
-  const pedimentOrnaments = [-16, -12, -8.5, 8.5, 12, 16].map((x) =>
-    unite(cyl(0.75, 2.8, [x, 0, 57]), ball(1.15, [x, 0, 58.6])),
-  )
-  const flag = unite(
-    cyl(0.8, 27, [0, 0, 73.5]),
-    box([6.2, 1.25, 3.2], [3.1, 0, 81.5]),
-    ball(1.15, [0, 0, 87]),
+  const pedimentOrnaments = [-15.3, -10.8, -7.4, 7.4, 10.8, 15.3].map((x) =>
+    unite(cyl(0.5, 1.6, [x, 0, 84]), ball(0.72, [x, 0, 85])),
   )
   return unite(
-    classicBaseSolid(36),
-    box([35, 15, 2.3], [0, 0, 16]),
+    architecturalStem(36, 69, 8, 5),
+    box([27, 10.5, 1.6], [0, 0, 67.7]),
+    box([35, 11, 1.8], [0, 0, 69]),
     body,
-    box([35, 15, 1.5], [0, 0, 31.8]),
-    box([35, 15, 2], [0, 0, 51.8]),
+    box([35, 11, 1.1], [0, 0, 74.4]),
+    box([35, 11, 1.2], [0, 0, 81.2]),
     ...columns,
-    prismX([[-10, 0], [10, 0], [0, 10]], 13.5, [0, 0, 51]),
-    prismX([[-5, 0], [5, 0], [0, 5]], 13.5, [-12.8, 0, 51]),
-    prismX([[-5, 0], [5, 0], [0, 5]], 13.5, [12.8, 0, 51]),
-    discY(2, 1.3, [0, -7.2, 55]),
-    box([35, 14.5, 1.2], [0, 0, 58]),
+    prismX([[-8.5, 0], [8.5, 0], [0, 5]], 10, [0, 0, 81]),
+    prismX([[-4, 0], [4, 0], [0, 3.4]], 10, [-13, 0, 81]),
+    prismX([[-4, 0], [4, 0], [0, 3.4]], 10, [13, 0, 81]),
+    discY(1.35, 1.1, [0, -5.6, 83.1]),
+    box([35, 10.5, 1,], [0, 0, 84]),
     ...pedimentOrnaments,
-    flag,
+    cyl(0.62, 5, [0, 0, 86]),
+    box([4.5, 1.1, 2.2], [2.2, 0, 87]),
+    ball(0.8, [0, 0, 88]),
   )
 }
 
 const buildObelisco = (): Solid => {
   const windows = [0, 90, 180, 270].map((angle) =>
     unite(
-      box([2.15, 1.3, 3.4], [0, -4, 60]),
-      box([3.2, 1.1, 0.65], [0, -4.5, 57.9]),
+      box([1.55, 1.2, 2.8], [0, -2.45, 68]),
+      box([2.2, 1.05, 0.6], [0, -2.85, 66.3]),
     ).rotate([0, 0, angle]),
   )
   const doors = [0, 90, 180, 270].map((angle) =>
     unite(
-      box([3.2, 1.35, 5], [0, -7.05, 22.5]),
-      box([4.3, 1.2, 0.7], [0, -7.55, 25.2]),
+      box([2.2, 1.2, 3.8], [0, -4.05, 24]),
+      box([3, 1.05, 0.65], [0, -4.45, 26.2]),
     ).rotate([0, 0, angle]),
   )
   return unite(
     classicBaseSolid(34),
-    box([18, 18, 3], [0, 0, 15.8]),
-    box([15, 15, 5], [0, 0, 19]),
-    cone(7, 4.1, 42, [0, 0, 42], 4),
-    cone(4.1, 0, 13, [0, 0, 69.5], 4),
+    box([15, 15, 2.4], [0, 0, 15.8]),
+    box([11.5, 11.5, 3], [0, 0, 18.3]),
+    box([9, 9, 3], [0, 0, 21]),
+    cone(4, 2.35, 47, [0, 0, 44.5], 4),
+    cone(2.35, 0, 10, [0, 0, 73], 4),
     ...doors,
     ...windows,
   )
@@ -263,70 +276,70 @@ const buildSanMartin = (): Solid => {
 const buildTorre = (): Solid => {
   const clocks = [0, 90, 180, 270].map((angle) =>
     unite(
-      discY(3.55, 1.7, [0, -8.65, 50]),
-      discY(2.75, 1.85, [0, -9.35, 50]),
-      box([0.55, 1.1, 3.9], [0, -10.1, 50]),
-      box([2.2, 1.1, 0.55], [0.65, -10.1, 50]),
+      discY(2.75, 1.25, [0, -6.65, 47.5]),
+      discY(2.1, 1.35, [0, -7.25, 47.5]),
+      box([0.45, 0.8, 2.8], [0, -7.75, 47.5]),
+      box([1.6, 0.8, 0.45], [0.5, -7.75, 47.5]),
     ).rotate([0, 0, angle]),
   )
-  const quoins = [24, 28, 32, 36, 40, 44].flatMap((z, row) =>
-    [[-7.3, -7.3], [-7.3, 7.3], [7.3, -7.3], [7.3, 7.3]].map(([x, y]) =>
-      box([2.3 + (row % 2) * 0.5, 2.3 + (row % 2) * 0.5, 1.5], [x, y, z]),
+  const quoins = [25, 29, 33, 37, 41].flatMap((z, row) =>
+    [[-5.55, -5.55], [-5.55, 5.55], [5.55, -5.55], [5.55, 5.55]].map(([x, y]) =>
+      box([1.45 + (row % 2) * 0.35, 1.45 + (row % 2) * 0.35, 1.1], [x, y, z]),
     ),
   )
-  const shaftWindows = [29, 37].flatMap((z) => [0, 90, 180, 270].map((angle) =>
+  const shaftWindows = [29, 36.5].flatMap((z) => [0, 90, 180, 270].map((angle) =>
     unite(
-      shallowWindow(0, -7.45, z, 3, 4.5),
-      box([4.2, 1.1, 0.65], [0, -8.1, z + 2.5]),
+      shallowWindow(0, -5.9, z, 2.3, 3.6, 1.2),
+      box([3.2, 0.9, 0.55], [0, -6.5, z + 2]),
     ).rotate([0, 0, angle]),
   ))
-  let lantern = box([13, 13, 9], [0, 0, 59])
-    .subtract(box([9, 9, 10], [0, 0, 59]))
-  for (const angle of [0, 90, 180, 270]) {
-    lantern = lantern.subtract(
-      archedOpeningFront(0, -6.5, 54.5, 59.5, 3.6, 4.4).rotate([0, 0, angle]),
-    )
-  }
+  const lantern = unite(
+    box([10.5, 10.5, 1.2], [0, 0, 52.5]),
+    box([10.5, 10.5, 1.2], [0, 0, 57.5]),
+    ...[[-4.25, -4.25], [-4.25, 4.25], [4.25, -4.25], [4.25, 4.25]].map(
+      ([x, y]) => box([2, 2, 5.8], [x, y, 55]),
+    ),
+  )
   return unite(
     classicBaseSolid(34),
-    box([22, 22, 3], [0, 0, 15.5]),
-    box([18, 18, 5], [0, 0, 18.5]),
-    box([14, 14, 27], [0, 0, 33]),
+    box([17, 17, 2.5], [0, 0, 15.7]),
+    box([14, 14, 3.5], [0, 0, 18]),
+    box([11, 11, 24], [0, 0, 31.2]),
     ...quoins,
     ...shaftWindows,
-    box([18, 18, 2.5], [0, 0, 46]),
-    box([17, 17, 9], [0, 0, 50]),
+    box([13, 13, 1.8], [0, 0, 43.5]),
+    box([13, 13, 7], [0, 0, 47.5]),
     ...clocks,
-    box([19, 19, 2], [0, 0, 54.5]),
+    box([14.5, 14.5, 1.5], [0, 0, 51.5]),
     lantern,
-    box([14, 14, 2], [0, 0, 63.5]),
-    cone(7, 5, 3.5, [0, 0, 66], 4),
-    ellip([5.2, 5.2, 3.2], [0, 0, 68.5]),
-    cone(3.2, 0.55, 5.2, [0, 0, 72.5]),
-    cyl(0.6, 5.5, [0, 0, 77]),
-    ball(0.9, [0, 0, 80]),
+    box([11.5, 11.5, 1.5], [0, 0, 58.3]),
+    cone(5.5, 4, 2.5, [0, 0, 60], 4),
+    ellip([4.1, 4.1, 2.4], [0, 0, 61.7]),
+    cone(2.5, 0.5, 2.8, [0, 0, 63.2]),
+    cyl(0.5, 2.5, [0, 0, 64]),
+    ball(0.7, [0, 0, 65]),
   )
 }
 
 const buildBuzon = (): Solid => {
   let body = unite(
     classicBaseSolid(28, 14),
-    cone(8.8, 7.35, 4, [0, 0, 15.5]),
-    cyl(7.35, 25, [0, 0, 29]),
-    cyl(8.25, 1.8, [0, 0, 18.8]),
-    cyl(8.25, 1.8, [0, 0, 38.8]),
-    cyl(8.7, 2.2, [0, 0, 41]),
-    ellip([8.5, 8.5, 3.6], [0, 0, 43]),
-    cyl(1.1, 1.5, [0, 0, 46.2]),
+    cone(8.5, 6.7, 4, [0, 0, 15]),
+    cyl(6.7, 26.5, [0, 0, 29.5]),
+    cyl(7.6, 1.8, [0, 0, 17]),
+    cyl(7.6, 1.8, [0, 0, 41]),
+    cyl(8.2, 2.2, [0, 0, 43]),
+    ellip([8, 8, 4.2], [0, 0, 46]),
+    cyl(0.9, 1.4, [0, 0, 49.3]),
   )
-  body = body.subtract(box([6.8, 2.2, 1.45], [0, -7.2, 35]))
+  body = body.subtract(box([6.2, 2, 1.35], [0, -6.65, 37]))
   return unite(
     body,
-    archFrameFront(0, -7.55, 29.7, 3.9, 21.2, 0.55, 1.35),
-    box([7.8, 1.25, 0.65], [0, -8.1, 21.3]),
-    box([7.8, 1.25, 0.65], [0, -8.1, 30]),
-    discY(1.15, 1.1, [2.3, -8.25, 24.5]),
-    box([8.6, 1.45, 1.05], [0, -7.85, 36.2]),
+    archFrameFront(0, -6.85, 30.2, 3.45, 21.4, 0.52, 1.2),
+    box([7, 1.1, 0.6], [0, -7.25, 21.5]),
+    box([7, 1.1, 0.6], [0, -7.25, 30.2]),
+    discY(1, 1, [2.1, -7.35, 25]),
+    box([7.5, 1.25, 0.95], [0, -7.05, 38.1]),
   )
 }
 

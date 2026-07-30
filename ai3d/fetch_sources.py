@@ -19,14 +19,17 @@ USER_AGENT = "AjedrezPorteno/1.0 (research; GitHub mpodeley/ajedrez-porteno)"
 
 
 def download(url: str, target: Path) -> None:
+    partial = target.with_suffix(f"{target.suffix}.part")
     for attempt in range(5):
         request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
         try:
-            with urllib.request.urlopen(request, timeout=60) as response, target.open("wb") as output:
+            with urllib.request.urlopen(request, timeout=60) as response, partial.open("wb") as output:
                 shutil.copyfileobj(response, output)
+            partial.replace(target)
             return
         except urllib.error.HTTPError as exc:
             if exc.code != 429 or attempt == 4:
+                partial.unlink(missing_ok=True)
                 raise
             time.sleep(3 * (attempt + 1))
 
@@ -61,29 +64,35 @@ def fetch_cabildo() -> dict[str, Any]:
     }
 
 
-def commons_query(params: dict[str, str]) -> dict[str, Any]:
-    api = config()["sources"]["san_martin_commons"]["api"]
+def commons_query(params: dict[str, str], api: str | None = None) -> dict[str, Any]:
+    api = api or config()["sources"]["san_martin_commons"]["api"]
     url = f"{api}?{urllib.parse.urlencode({**params, 'format': 'json', 'formatversion': '2'})}"
     request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
     with urllib.request.urlopen(request, timeout=60) as response:
         return json.loads(response.read())
 
 
-def fetch_san_martin() -> dict[str, Any]:
-    source = config()["sources"]["san_martin_commons"]
-    folder = EXPERIMENTS / "sources" / "san-martin"
+def fetch_commons_category(
+    *,
+    source: dict[str, Any],
+    folder_name: str,
+    category: str,
+    limit: int,
+) -> dict[str, Any]:
+    folder = EXPERIMENTS / "sources" / folder_name
     folder.mkdir(parents=True, exist_ok=True)
     data = commons_query(
         {
             "action": "query",
             "generator": "categorymembers",
-            "gcmtitle": source["category"],
+            "gcmtitle": category,
             "gcmtype": "file",
-            "gcmlimit": "24",
+            "gcmlimit": str(limit),
             "prop": "imageinfo",
             "iiprop": "url|extmetadata",
-            "iiurlwidth": "1600",
-        }
+            "iiurlwidth": "800",
+        },
+        source["api"],
     )
     images = []
     for page in data.get("query", {}).get("pages", []):
@@ -94,6 +103,16 @@ def fetch_san_martin() -> dict[str, Any]:
             continue
         extension = Path(urllib.parse.urlparse(thumb).path).suffix or ".jpg"
         target = folder / f"{page['pageid']}{extension}"
+        cached = next(
+            (
+                candidate
+                for candidate in folder.glob(f"{page['pageid']}.*")
+                if not candidate.name.endswith(".part")
+            ),
+            None,
+        )
+        if cached is not None:
+            target = cached
         if not target.exists():
             download(thumb, target)
             time.sleep(1.1)
@@ -111,12 +130,41 @@ def fetch_san_martin() -> dict[str, Any]:
         )
     if not images:
         raise RuntimeError("Wikimedia Commons no devolvió imágenes para la categoría configurada")
-    return {**source, "images": images}
+    return {**source, "category": category, "images": images}
+
+
+def fetch_san_martin(limit: int) -> dict[str, Any]:
+    source = config()["sources"]["san_martin_commons"]
+    return fetch_commons_category(
+        source=source,
+        folder_name="san-martin",
+        category=source["category"],
+        limit=limit,
+    )
+
+
+def fetch_piece(piece: str, limit: int) -> dict[str, Any]:
+    source = config()["sources"]["commons_pieces"]
+    category = source["categories"][piece]
+    public_source = {key: value for key, value in source.items() if key != "categories"}
+    return fetch_commons_category(
+        source=public_source,
+        folder_name=piece,
+        category=category,
+        limit=limit,
+    )
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Descarga las fuentes permitidas y conserva su atribución.")
-    parser.add_argument("source", choices=("cabildo", "san-martin", "all"), nargs="?", default="all")
+    pieces = tuple(config()["sources"]["commons_pieces"]["categories"])
+    parser.add_argument(
+        "source",
+        choices=("cabildo", "san-martin", "all-commons", "all", *pieces),
+        nargs="?",
+        default="all",
+    )
+    parser.add_argument("--limit", type=int, default=12)
     args = parser.parse_args()
     ensure_directories()
     manifest_path = EXPERIMENTS / "manifests" / "sources.json"
@@ -128,7 +176,12 @@ def main() -> int:
     if args.source in ("cabildo", "all"):
         payload["cabildo"] = fetch_cabildo()
     if args.source in ("san-martin", "all"):
-        payload["san_martin"] = fetch_san_martin()
+        payload["san_martin"] = fetch_san_martin(args.limit)
+    if args.source in ("all-commons", "all"):
+        for piece in pieces:
+            payload[piece] = fetch_piece(piece, args.limit)
+    elif args.source in pieces:
+        payload[args.source] = fetch_piece(args.source, args.limit)
     manifest = write_manifest("sources", payload)
     print("Manifiesto:", manifest)
     return 0

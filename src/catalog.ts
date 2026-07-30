@@ -29,7 +29,7 @@ export const pieces: readonly PieceDefinition[] = [
     stlFile: 'rey-cabildo.stl',
     camera: { distance: 132, targetHeight: 43 },
     story: 'Las dos recovas de cinco arcos, el balcón y la torre del Cabildo coronan la pieza principal.',
-    modelNotes: 'Diez arcos calados, reloj, campanario, cúpula y cruz reforzada.',
+    modelNotes: 'Fachada baja y ancha, diez arcos, reloj, campanario, cúpula y cruz reforzada.',
   },
   {
     id: 'reina',
@@ -42,7 +42,7 @@ export const pieces: readonly PieceDefinition[] = [
     stlFile: 'reina-teatro-colon.stl',
     camera: { distance: 126, targetHeight: 40 },
     story: 'La fachada Beaux-Arts del gran teatro se vuelve una corona de arcos, columnas y frontones.',
-    modelNotes: 'Siete paños, tres frontones, columnata, remates y bandera reforzada.',
+    modelNotes: 'Fachada ancha de siete paños, tres frontones, columnata, remates y bandera.',
   },
   {
     id: 'alfil',
@@ -55,7 +55,7 @@ export const pieces: readonly PieceDefinition[] = [
     stlFile: 'alfil-obelisco.stl',
     camera: { distance: 116, targetHeight: 35 },
     story: 'La aguja de la Avenida 9 de Julio reemplaza la mitra con una silueta inmediata.',
-    modelNotes: 'Fuste troncopiramidal, cuatro accesos y ventanas superiores en relieve.',
+    modelNotes: 'Fuste troncopiramidal esbelto, cuatro accesos y ventanas superiores en relieve.',
   },
   {
     id: 'caballo',
@@ -68,7 +68,7 @@ export const pieces: readonly PieceDefinition[] = [
     stlFile: 'caballo-san-martin.stl',
     camera: { distance: 112, targetHeight: 34 },
     story: 'El caballo encabritado y el brazo alzado del Libertador forman una silueta ecuestre inmediata.',
-    modelNotes: 'Caballo encabritado, jinete, bicornio y brazo señalando; base y apoyos integrados para FDM.',
+    modelNotes: 'Caballo y jinete a escala uniforme sobre pedestal; dos apoyos integrados para FDM.',
   },
   {
     id: 'torre',
@@ -81,7 +81,7 @@ export const pieces: readonly PieceDefinition[] = [
     stlFile: 'torre-monumental.stl',
     camera: { distance: 104, targetHeight: 30 },
     story: 'El reloj de Retiro ocupa el cuerpo alto y remata en su linterna abierta y cúpula.',
-    modelNotes: 'Cuatro relojes, sillares de esquina, arcos calados y aguja reforzada.',
+    modelNotes: 'Cuerpo esbelto, cuatro relojes, sillares, linterna y aguja reforzada.',
   },
   {
     id: 'peon',
@@ -94,7 +94,7 @@ export const pieces: readonly PieceDefinition[] = [
     stlFile: 'peon-buzon-porteno.stl',
     camera: { distance: 84, targetHeight: 23 },
     story: 'El clásico buzón urbano se convierte en el habitante cotidiano del tablero.',
-    modelNotes: 'Tapa curva, ranura y puerta frontal resueltas como relieves imprimibles.',
+    modelNotes: 'Proporción cilíndrica original, tapa curva, ranura y puerta frontal imprimibles.',
   },
 ] as const
 

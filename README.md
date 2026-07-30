@@ -46,11 +46,14 @@ la tapa del buzón— están unidos o reforzados.
 - `src/`: galería Vite + TypeScript + Three.js.
 
 Cinco piezas se construyen con primitivas, perfiles, envolventes y operaciones
-booleanas paramétricas sobre el núcleo Manifold. El caballo curado parte de tres
-vistas públicas del monumento, Hunyuan3D multivista (semilla 307), reparación
-voxel de 0,35 mm, orientación editorial a 150° y simplificación a 70.000
-triángulos. `npm run generate`
-conserva ese STL curado y genera las demás piezas. El validador comprueba
+booleanas paramétricas sobre el núcleo Manifold. Cabildo y Teatro Colón
+conservan fachadas anchas sobre fustes de ajedrez; Obelisco, Torre Monumental y
+buzón mantienen la esbeltez de sus referentes sin estirar la arquitectura. El
+caballo curado parte de tres vistas públicas del monumento, Hunyuan3D
+multivista (semilla 307), escala isotrópica, reparación voxel fina de 0,25 mm,
+suavizado Taubin, orientación editorial a 150° y simplificación a 90.000
+triángulos. `npm run generate` conserva ese STL curado y genera las demás
+piezas. El validador comprueba
 aristas, triángulos, medidas, base plana y cantidad de envolventes; JSCAD
 conserva una implementación liviana para experimentar con las proporciones.
 

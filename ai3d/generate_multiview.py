@@ -135,7 +135,11 @@ def wait_for_output(base_url: str, prompt_id: str, timeout: int) -> dict[str, An
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Genera cuatro candidatos Hunyuan3D multivista.")
-    parser.add_argument("--piece", default="caballo", choices=("caballo", "rey"))
+    parser.add_argument(
+        "--piece",
+        default="caballo",
+        choices=("rey", "reina", "alfil", "caballo", "torre", "peon"),
+    )
     parser.add_argument("--input-dir", type=Path, required=True)
     parser.add_argument("--seed", type=int, action="append", dest="seeds")
     parser.add_argument("--timeout", type=int, default=3600)
